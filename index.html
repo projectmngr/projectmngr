@@ -150,7 +150,7 @@
       <p id="real-score-display" style="font-size: 15px; font-weight: bold; color: #14532d; margin: 0; line-height: 1.4;"></p>
     </div>
 
-  <div id="hidden-log-box" style="display: none; margin-top: 20px; text-align: left; background: #f3f2f1; padding: 15px; border-radius: 4px; border: 1px solid #ccc;">
+    <div id="hidden-log-box" style="display: none; margin-top: 20px; text-align: left; background: #f3f2f1; padding: 15px; border-radius: 4px; border: 1px solid #ccc;">
       <h4 style="margin-top: 0; color: #333; font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px;">Presentation Session Logs (Timestamps Only)</h4>
       
       <div style="font-weight: bold; font-size: 12px; color: #3f000b; margin-bottom: 4px;">1. Initial Link Clicks (Page Loads)</div>
@@ -173,21 +173,6 @@
     </p>
   </div>
 
-<div id="hidden-log-box" style="display: none; margin-top: 20px; text-align: left; background: #f3f2f1; padding: 15px; border-radius: 4px; border: 1px solid #ccc;">
-      <h4 style="margin-top: 0; color: #333; font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px;">Presentation Session Logs (Timestamps Only)</h4>
-      
-      <div style="font-weight: bold; font-size: 12px; color: #3f000b; margin-bottom: 4px;">1. Initial Link Clicks (Page Loads)</div>
-      <div id="click-log-list" style="font-family: monospace; font-size: 12px; color: #555; max-height: 100px; overflow-y: auto; margin-bottom: 15px;">
-      </div>
-
-      <div style="font-weight: bold; font-size: 12px; color: #3f000b; margin-bottom: 4px;">2. Completed Trivia Submissions</div>
-      <div id="timestamp-log-list" style="font-family: monospace; font-size: 12px; color: #555; max-height: 100px; overflow-y: auto;">
-      </div>
-      
-      <br>
-      <button onclick="clearSimFlags()" style="margin-top:5px; padding:4px 8px; font-size:11px; cursor:pointer;">Reset My Local Flags</button>
-    </div>
-
   <script>
     const SUBAPASE_URL = "https://zpdbotqrjduacgwtnlpw.supabase.co";
     const SUPABASE_KEY = "sb_publishable_sdreB7CNvIvdsSwip368_g_bR0HY_r7";
@@ -198,7 +183,6 @@
     let timeTakenString = "";
 
     // Track initialization timestamp and instantly record a click
-   // Track initialization timestamp and instantly record a click
     window.onload = async function() {
       startTime = Date.now();
 
