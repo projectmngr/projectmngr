@@ -164,11 +164,12 @@
     </p>
   </div>
 
-  <script>
-    // Replace with your actual Supabase credentials
-const SUBAPASE_URL = "https://your-project-id.supabase.co";
-const SUPABASE_KEY = "your-anon-public-key-here";
-const supabase = supabase.createClient(SUBAPASE_URL, SUPABASE_KEY);
+ <script>
+    // 1. Fixed initialization naming conflict
+    const SUBAPASE_URL = "https://zpdbotqrjduacgwtnlpw.supabase.co/rest/v1/";
+    const SUPABASE_KEY = "sb_publishable_sdreB7CNvIvdsSwip368_g_bR0HY_r7";
+    const supabaseClient = supabase.createClient(SUBAPASE_URL, SUPABASE_KEY);
+    
     let finalScore = 0; 
     let startTime = 0;
     let timeTakenString = "";
@@ -193,13 +194,11 @@ const supabase = supabase.createClient(SUBAPASE_URL, SUPABASE_KEY);
         return;
       }
 
-      // Calculate elapsed session time immediately upon submission
       let endTime = Date.now();
       let totalSeconds = Math.floor((endTime - startTime) / 1000);
       let minutes = Math.floor(totalSeconds / 60);
       let seconds = totalSeconds % 60;
       
-      // Format structural duration string
       timeTakenString = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds} seconds`;
 
       finalScore = 0;
@@ -237,17 +236,16 @@ const supabase = supabase.createClient(SUBAPASE_URL, SUPABASE_KEY);
 
     localStorage.setItem('sim_submitted_flag', 'true');
 
-    // Send the timestamp to your cloud database anonymously (No email sent!)
+    // Using the fixed supabaseClient variable name here
     try {
-        await supabase
+        await supabaseClient
             .from('raffle_submissions')
-            .insert([{}]); // This automatically creates a row with the server's current timestamp
+            .insert([{}]); 
         console.log("Global timestamp saved!");
     } catch (err) {
         console.error("Database error:", err);
     }
 
-    // Update UI elements
     document.getElementById('real-score-display').innerHTML = `Score: ${finalScore} / 7<br><span style="font-weight: normal; font-size: 13px; color: #4b5563;">Completion Velocity: Passed in ${timeTakenString}</span>`;
     document.getElementById('step-login-email').style.display = 'none';
     document.getElementById('step-success').style.display = 'block';
@@ -261,8 +259,8 @@ async function toggleSecretLog() {
         logListContainer.innerHTML = 'Loading live cloud logs...';
         logBox.style.display = 'block';
 
-        // Fetch ALL collective timestamps from the cloud database
-        const { data, error } = await supabase
+        // Using the fixed supabaseClient variable name here too
+        const { data, error } = await supabaseClient
             .from('raffle_submissions')
             .select('created_at')
             .order('created_at', { ascending: true });
@@ -273,7 +271,6 @@ async function toggleSecretLog() {
             logListContainer.innerHTML = 'No global simulation runs recorded yet.';
         } else {
             data.forEach(function(row, index) {
-                // Convert UTC database time back to a clean local timestamp string
                 let localTime = new Date(row.created_at).toLocaleString();
                 logListContainer.innerHTML += `Global Run #${index + 1}: Completed at ${localTime}<br>`;
             });
@@ -291,8 +288,6 @@ async function toggleSecretLog() {
       alert("Simulation states cleared successfully for next presentation run.");
       location.reload();
     }
-    
-    <!-- To clear timestamp logs, go to inspect, use the console and type localStorage.clear () --> 
   </script>
 
 </body>
