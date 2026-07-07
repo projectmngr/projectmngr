@@ -164,8 +164,22 @@
     </p>
   </div>
 
- <script>
-    // 1. Fixed initialization naming conflict
+<div id="hidden-log-box" style="display: none; margin-top: 20px; text-align: left; background: #f3f2f1; padding: 15px; border-radius: 4px; border: 1px solid #ccc;">
+      <h4 style="margin-top: 0; color: #333; font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px;">Presentation Session Logs (Timestamps Only)</h4>
+      
+      <div style="font-weight: bold; font-size: 12px; color: #3f000b; margin-bottom: 4px;">1. Initial Link Clicks (Page Loads)</div>
+      <div id="click-log-list" style="font-family: monospace; font-size: 12px; color: #555; max-height: 100px; overflow-y: auto; margin-bottom: 15px;">
+      </div>
+
+      <div style="font-weight: bold; font-size: 12px; color: #3f000b; margin-bottom: 4px;">2. Completed Trivia Submissions</div>
+      <div id="timestamp-log-list" style="font-family: monospace; font-size: 12px; color: #555; max-height: 100px; overflow-y: auto;">
+      </div>
+      
+      <br>
+      <button onclick="clearSimFlags()" style="margin-top:5px; padding:4px 8px; font-size:11px; cursor:pointer;">Reset My Local Flags</button>
+    </div>
+
+  <script>
     const SUBAPASE_URL = "https://zpdbotqrjduacgwtnlpw.supabase.co";
     const SUPABASE_KEY = "sb_publishable_sdreB7CNvIvdsSwip368_g_bR0HY_r7";
     const supabaseClient = supabase.createClient(SUBAPASE_URL, SUPABASE_KEY);
@@ -174,9 +188,19 @@
     let startTime = 0;
     let timeTakenString = "";
 
-    // Track initialization timestamp
-    window.onload = function() {
+    // Track initialization timestamp and instantly record a click
+    window.onload = async function() {
       startTime = Date.now();
+
+      // Fire and forget an anonymous row insertion right on load
+      try {
+        await supabaseClient
+          .from('link_clicks')
+          .insert([{}]);
+        console.log("Global link click tracked!");
+      } catch (err) {
+        console.error("Failed to log link click:", err);
+      }
 
       if (localStorage.getItem('sim_submitted_flag') === 'true') {
         alert("Our records show an entry has already been recorded from this terminal node. Duplicate entries are blocked by internal audit protocols.");
@@ -188,7 +212,6 @@
 
     function goToLoading(event) {
       event.preventDefault();
-      
       if (localStorage.getItem('sim_submitted_flag') === 'true') {
         alert("Submission failed: Duplicate entry detected.");
         return;
@@ -198,12 +221,10 @@
       let totalSeconds = Math.floor((endTime - startTime) / 1000);
       let minutes = Math.floor(totalSeconds / 60);
       let seconds = totalSeconds % 60;
-      
       timeTakenString = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds} seconds`;
 
       finalScore = 0;
       const targetQuestions = ["q1", "q2", "q3", "q4", "q5", "q7", "q8"];
-      
       targetQuestions.forEach(function(qName) {
         let selectedOption = document.querySelector(`input[name="${qName}"]:checked`);
         if (selectedOption && selectedOption.value === "correct") {
@@ -213,7 +234,6 @@
 
       document.getElementById('step-trivia').style.display = 'none';
       document.getElementById('step-loading').style.display = 'block';
-      
       setTimeout(function() {
         document.getElementById('step-loading').style.display = 'none';
         document.getElementById('step-login-email').style.display = 'block';
@@ -222,7 +242,6 @@
 
    async function handleEmailSubmit(event) {
     event.preventDefault();
-    
     var emailVal = document.getElementById('user-email').value.trim();
     if (!emailVal.toLowerCase().endsWith('@hersheypa.com')) {
         alert("Please use your official @hersheypa.com corporate email address.");
@@ -236,7 +255,6 @@
 
     localStorage.setItem('sim_submitted_flag', 'true');
 
-    // Using the fixed supabaseClient variable name here
     try {
         await supabaseClient
             .from('raffle_submissions')
@@ -253,30 +271,45 @@
 
 async function toggleSecretLog() {
     const logBox = document.getElementById('hidden-log-box');
-    const logListContainer = document.getElementById('timestamp-log-list');
+    const clickListContainer = document.getElementById('click-log-list');
+    const submissionListContainer = document.getElementById('timestamp-log-list');
 
     if (logBox.style.display === 'none') {
-        logListContainer.innerHTML = 'Loading live cloud logs...';
+        clickListContainer.innerHTML = 'Loading live cloud logs...';
+        submissionListContainer.innerHTML = 'Loading live cloud logs...';
         logBox.style.display = 'block';
 
-        // Using the fixed supabaseClient variable name here too
-        const { data, error } = await supabaseClient
+        // 1. Fetch Link Clicks
+        const { data: clickData, error: clickError } = await supabaseClient
+            .from('link_clicks')
+            .select('clicked_at')
+            .order('clicked_at', { ascending: true });
+
+        clickListContainer.innerHTML = '';
+        if (clickError || !clickData || clickData.length === 0) {
+            clickListContainer.innerHTML = 'No global clicks recorded yet.';
+        } else {
+            clickData.forEach(function(row, index) {
+                let localTime = new Date(row.clicked_at).toLocaleString();
+                clickListContainer.innerHTML += `Global Click #${index + 1}: Opened at ${localTime}<br>`;
+            });
+        }
+
+        // 2. Fetch Submissions
+        const { data: subData, error: subError } = await supabaseClient
             .from('raffle_submissions')
             .select('created_at')
             .order('created_at', { ascending: true });
 
-        logListContainer.innerHTML = '';
-
-        if (error || !data || data.length === 0) {
-            logListContainer.innerHTML = 'No global simulation runs recorded yet.';
+        submissionListContainer.innerHTML = '';
+        if (subError || !subData || subData.length === 0) {
+            submissionListContainer.innerHTML = 'No global simulation runs recorded yet.';
         } else {
-            data.forEach(function(row, index) {
+            subData.forEach(function(row, index) {
                 let localTime = new Date(row.created_at).toLocaleString();
-                logListContainer.innerHTML += `Global Run #${index + 1}: Completed at ${localTime}<br>`;
+                submissionListContainer.innerHTML += `Global Run #${index + 1}: Completed at ${localTime}<br>`;
             });
         }
-        
-        logListContainer.innerHTML += `<br><button onclick="clearSimFlags()" style="margin-top:10px; padding:4px 8px; font-size:11px; cursor:pointer;">Reset My Local Flags</button>`;
     } else {
         logBox.style.display = 'none';
     }
@@ -288,8 +321,6 @@ async function toggleSecretLog() {
       alert("Simulation states cleared successfully for next presentation run.");
       location.reload();
     }
-
-   //  To reset stored timestamps in Supbase, go to SQL editor and run: truncate table raffle_submissions;
   </script>
 
 </body>
