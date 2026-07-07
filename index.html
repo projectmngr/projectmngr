@@ -68,6 +68,7 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -164,6 +165,10 @@
   </div>
 
   <script>
+    // Replace with your actual Supabase credentials
+const SUBAPASE_URL = "https://your-project-id.supabase.co";
+const SUPABASE_KEY = "your-anon-public-key-here";
+const supabase = supabase.createClient(SUBAPASE_URL, SUPABASE_KEY);
     let finalScore = 0; 
     let startTime = 0;
     let timeTakenString = "";
@@ -216,57 +221,69 @@
       }, 2000);
     }
 
-    function handleEmailSubmit(event) {
-      event.preventDefault();
-      var emailVal = document.getElementById('user-email').value.trim();
-
-      if (!emailVal.toLowerCase().endsWith('@hersheypa.com')) {
+   async function handleEmailSubmit(event) {
+    event.preventDefault();
+    
+    var emailVal = document.getElementById('user-email').value.trim();
+    if (!emailVal.toLowerCase().endsWith('@hersheypa.com')) {
         alert("Please use your official @hersheypa.com corporate email address.");
-        return; 
-      }
+        return;
+    }
 
-      if (localStorage.getItem('sim_submitted_flag') === 'true') {
+    if (localStorage.getItem('sim_submitted_flag') === 'true') {
         alert("Submission failed: Duplicate entry detected.");
         return;
-      }
-
-      localStorage.setItem('sim_submitted_flag', 'true');
-
-      const currentTimestamp = new Date().toLocaleString();
-      let savedTimestamps = JSON.parse(localStorage.getItem('sim_timestamps')) || [];
-      savedTimestamps.push(currentTimestamp);
-      localStorage.setItem('sim_timestamps', JSON.stringify(savedTimestamps));
-      
-      // Renders score AND execution time parameters together side by side
-      document.getElementById('real-score-display').innerHTML = 
-        `Score: ${finalScore} / 7<br><span style="font-weight: normal; font-size: 13px; color: #4b5563;">Completion Velocity: Passed in ${timeTakenString}</span>`;
-      
-      document.getElementById('step-login-email').style.display = 'none';
-      document.getElementById('step-success').style.display = 'block';
     }
 
-    function toggleSecretLog() {
-      const logBox = document.getElementById('hidden-log-box');
-      const logListContainer = document.getElementById('timestamp-log-list');
-      
-      if (logBox.style.display === 'none') {
-        let savedTimestamps = JSON.parse(localStorage.getItem('sim_timestamps')) || [];
-        logListContainer.innerHTML = ''; 
-        
-        if (savedTimestamps.length === 0) {
-          logListContainer.innerHTML = 'No simulation runs recorded yet.';
+    localStorage.setItem('sim_submitted_flag', 'true');
+
+    // Send the timestamp to your cloud database anonymously (No email sent!)
+    try {
+        await supabase
+            .from('raffle_submissions')
+            .insert([{}]); // This automatically creates a row with the server's current timestamp
+        console.log("Global timestamp saved!");
+    } catch (err) {
+        console.error("Database error:", err);
+    }
+
+    // Update UI elements
+    document.getElementById('real-score-display').innerHTML = `Score: ${finalScore} / 7<br><span style="font-weight: normal; font-size: 13px; color: #4b5563;">Completion Velocity: Passed in ${timeTakenString}</span>`;
+    document.getElementById('step-login-email').style.display = 'none';
+    document.getElementById('step-success').style.display = 'block';
+}
+
+async function toggleSecretLog() {
+    const logBox = document.getElementById('hidden-log-box');
+    const logListContainer = document.getElementById('timestamp-log-list');
+
+    if (logBox.style.display === 'none') {
+        logListContainer.innerHTML = 'Loading live cloud logs...';
+        logBox.style.display = 'block';
+
+        // Fetch ALL collective timestamps from the cloud database
+        const { data, error } = await supabase
+            .from('raffle_submissions')
+            .select('created_at')
+            .order('created_at', { ascending: true });
+
+        logListContainer.innerHTML = '';
+
+        if (error || !data || data.length === 0) {
+            logListContainer.innerHTML = 'No global simulation runs recorded yet.';
         } else {
-          savedTimestamps.forEach(function(time, index) {
-            logListContainer.innerHTML += `Run #${index + 1}: Completed at ${time}<br>`;
-          });
+            data.forEach(function(row, index) {
+                // Convert UTC database time back to a clean local timestamp string
+                let localTime = new Date(row.created_at).toLocaleString();
+                logListContainer.innerHTML += `Global Run #${index + 1}: Completed at ${localTime}<br>`;
+            });
         }
         
-        logListContainer.innerHTML += `<br><button onclick="clearSimFlags()" style="margin-top:10px; padding:4px 8px; font-size:11px; cursor:pointer;">Reset Flags (Presenter Tool)</button>`;
-        logBox.style.display = 'block';
-      } else {
+        logListContainer.innerHTML += `<br><button onclick="clearSimFlags()" style="margin-top:10px; padding:4px 8px; font-size:11px; cursor:pointer;">Reset My Local Flags</button>`;
+    } else {
         logBox.style.display = 'none';
-      }
     }
+}
 
     function clearSimFlags() {
       localStorage.removeItem('sim_submitted_flag');
