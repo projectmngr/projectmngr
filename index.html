@@ -1,1 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HE&R World Cup Promotion Portal</title>
+  <style>
+    body {
+      /* Clean corporate fonts matching modern HE&R portals */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #fcfbfa; /* Slightly warm linen tone used in Hershey branding */
+      margin: 0;
+      padding: 20px; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh; 
+    }
+    .container {
+      background: white;
+      padding: 36px;
+      border-radius: 4px;
+      box-shadow: 0px 4px 20px rgba(74, 44, 17, 0.08); /* Soft chocolate-tinted drop shadow */
+      width: 100%;
+      max-width: 440px;
+      box-sizing: border-box;
+      border-top: 4px solid #3f000b; /* Signature HE&R Deep Maroon/Chocolate accent bar */
+    }
+    .btn {
+      width: 100%;
+      background: #3f000b; /* Official deep corporate tone */
+      color: white;
+      padding: 12px;
+      border: none;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 15px;
+      font-family: inherit;
+      letter-spacing: 0.5px;
+      transition: background 0.2s ease;
+    }
+    .btn:hover { background: #260007; }
+    input[type="email"] {
+      width: 100%;
+      padding: 11px;
+      margin: 10px 0 20px 0;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 15px;
+      font-family: inherit;
+    }
+    input[type="email"]:focus {
+      outline: none;
+      border-color: #3f000b;
+      box-shadow: 0 0 0 2px rgba(63, 0, 11, 0.15);
+    }
+    /* Spinner animation */
+    .spinner {
+      border: 4px solid #f3f2f1;
+      border-top: 4px solid #3f000b;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
 
+  <div id="step-trivia" class="container">
+    <h2 style="color: #3f000b; margin-top: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.3px;">HE&R World Cup Finals Tickets Raffle</h2>
+    <p style="font-size: 14px; color: #555555; line-height: 1.5;">Complete this brief employee engagement challenge to validate your eligibility. Speed and accuracy secure your corporate entry ticket to the World Cup Final.</p>
+    
+    <div style="background: #fff5f5; border-left: 4px solid #d9534f; padding: 12px; margin: 20px 0; border-radius: 0 4px 4px 0;">
+      <span style="color: #d9534f; font-weight: bold; font-size: 13px; letter-spacing: 0.5px;">ANTI-CHEAT NOTICE</span>
+      <p style="color: #444444; font-size: 12px; margin: 4px 0 0 0; line-height: 1.4;">Active window validation is enabled. Internal compliance tracking verifies if alternate browser nodes or search indices are cross-referenced during the session.</p>
+    </div>
+
+    <form onsubmit="goToLoading(event)">
+      <p style="font-weight: 600; font-size: 14px; margin-bottom: 8px; color: #333333;">1. Which nation has won the most FIFA World Cups?</p>
+      <input type="radio" name="q1" value="correct" required> Brazil <br>
+      <input type="radio" name="q1" value="wrong"> Germany <br>
+      <input type="radio" name="q1" value="wrong"> Argentina <br>
+
+      <p style="font-weight: 600; font-size: 14px; margin-bottom: 8px; margin-top: 18px; color: #333333;">2. How many minutes is a standard soccer match?</p>
+      <input type="radio" name="q2" value="wrong" required> 80 Minutes <br>
+      <input type="radio" name="q2" value="correct"> 90 Minutes <br>
+      
+      <p style="font-weight: 600; font-size: 14px; margin-bottom: 8px; margin-top: 18px; color: #333333;">3. True or False: The Netherlands has won a FIFA World Cup title.</p>
+      <input type="radio" name="q3" value="wrong" required> True <br>
+      <input type="radio" name="q3" value="correct"> False <br>
+
+      <p style="font-weight: 600; font-size: 14px; margin-bottom: 8px; margin-top: 18px; color: #333333;">4. How many players from each team are on the field during a match?</p>
+      <input type="radio" name="q4" value="correct" required> 11 <br>
+      <input type="radio" name="q4" value="wrong"> 10 <br>
+      <input type="radio" name="q4" value="wrong"> 12 <br>
+
+      <p style="font-weight: 600; font-size: 14px; margin-bottom: 8px; margin-top: 18px; color: #333333;">5. How often is the FIFA World Cup tournament held?</p>
+      <input type="radio" name="q5" value="wrong" required> Every 2 years <br>
+      <input type="radio" name="q5" value="correct"> Every 4 years <br>
+      <input type="radio" name="q5" value="wrong"> Every 5 years <br>
+
+      <p style="font-weight: 600; font-size: 14px; margin-bottom: 8px; margin-top: 18px; color: #333333;">6. Which country hosted the first-ever FIFA World Cup back in 1930?</p>
+      <input type="radio" name="q7" value="correct" required> Uruguay <br>
+      <input type="radio" name="q7" value="wrong"> Italy <br>
+      <input type="radio" name="q7" value="wrong"> France <br>
+
+      <p style="font-weight: 600; font-size: 14px; margin-bottom: 8px; margin-top: 18px; color: #333333;">7. Only two countries have ever won back-to-back World Cups. Italy is one, who is the other?</p>
+      <input type="radio" name="q8" value="wrong" required> Germany <br>
+      <input type="radio" name="q8" value="wrong"> Argentina <br>
+      <input type="radio" name="q8" value="correct"> Brazil <br>
+      
+      <br><br>
+      <button type="submit" class="btn">Submit Answers & Enter Raffle</button>
+    </form>
+  </div>
+
+  <div id="step-loading" class="container" style="display: none; text-align: center; padding: 50px 30px;">
+    <div class="spinner"></div>
+    <h3 style="color: #333333; margin-bottom: 5px; font-weight: 600;">Securing Entry...</h3>
+    <p style="color: #666666; font-size: 13px; margin-top: 0;">Verifying corporate raffle eligibility via Employee SSO.</p>
+  </div>
+
+  <div id="step-login-email" class="container" style="display: none;">
+    <div style="font-weight: 700; color: #3f000b; margin-bottom: 20px; font-size: 18px; letter-spacing: -0.2px;">HE&R Single Sign-On</div>
+    <h3 style="color: #333333; margin-top: 0; font-size: 20px; font-weight: 500;">Sign in</h3>
+    <p style="font-size: 13px; color: #555555; margin-bottom: 15px;">Use your corporate account to verify your raffle timestamp.</p>
+    
+    <form onsubmit="handleEmailSubmit(event)">
+      <input type="email" id="user-email" placeholder="username@hersheypa.com" pattern="[a-zA-Z0-9._%+-]+@[hH][eE][rR][sS][hH][eE][yY][pP][aA]\.[cC][oO][mM]$" title="Please use your official @hersheypa.com corporate email address." required>
+      <button type="submit" class="btn">Sign in</button>
+    </form>
+  </div>
+
+  <div id="step-success" class="container" style="display: none; text-align: center; padding: 40px 30px;">
+    <h2 style="color: #d9534f; margin-top: 0; font-size: 26px;">🎣 Simulation Complete!</h2>
+    <p style="font-weight: bold; color: #333333; margin-bottom: 20px; font-size: 16px;">Gotcha! This was a mock cybersecurity awareness drill.</p>
+    
+    <p style="font-size: 13px; color: #555555; text-align: left; line-height: 1.5; background: #fff8f2; padding: 15px; border-left: 4px solid #3f000b; margin-bottom: 25px; border-radius: 0 4px 4px 0;">
+       To spot this phishing attempt before ever clicking the link, an employee needs to look for two specific red flags within the email itself. First, check the sender's actual address—while the display name might read "HE&R Employee Engagement," the email address behind it is an external account, not an official company domain. Secondly, if you hover your mouse over the button before clicking it, the preview link points to an external web address rather than an official company intranet <span onclick="toggleSecretLog()" style="cursor: default; color: inherit; font-weight: inherit; -webkit-user-select: none; user-select: none;">portal</span>.
+    </p>
+
+    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 20px; border-radius: 6px; text-align: left; margin-bottom: 20px;">
+      <h4 style="color: #166534; margin-top: 0; margin-bottom: 5px; font-size: 16px;">📊 Your Unofficial Trivia Results</h4>
+      <p id="real-score-display" style="font-size: 15px; font-weight: bold; color: #14532d; margin: 0; line-height: 1.4;"></p>
+    </div>
+
+    <div id="hidden-log-box" style="display: none; margin-top: 20px; text-align: left; background: #f3f2f1; padding: 15px; border-radius: 4px; border: 1px solid #ccc;">
+      <h4 style="margin-top: 0; color: #333; font-size: 14px;">Presentation Session Log (Timestamps Only)</h4>
+      <div id="timestamp-log-list" style="font-family: monospace; font-size: 12px; color: #555; max-height: 120px; overflow-y: auto;">
+      </div>
+    </div>
+
+    <h3 style="color: #333333; margin-bottom: 5px; font-size: 18px;">Have a wonderful day! ⚽</h3>
+    <p style="font-size: 13px; color: #666666; margin-top: 0; margin-bottom: 25px;">Keep your soccer knowledge sharp and your corporate credentials safer.</p>
+    
+    <p style="font-size: 11px; color: #777777; background: #eee; padding: 10px; border-radius: 4px; margin-top: 25px;">
+      <em>Compliance Note: Rest assured, no credentials were recorded or stored during this demonstration.</em>
+    </p>
+  </div>
+
+  <script>
+    let finalScore = 0; 
+    let startTime = 0;
+    let timeTakenString = "";
+
+    // Track initialization timestamp
+    window.onload = function() {
+      startTime = Date.now();
+
+      if (localStorage.getItem('sim_submitted_flag') === 'true') {
+        alert("Our records show an entry has already been recorded from this terminal node. Duplicate entries are blocked by internal audit protocols.");
+        document.getElementById('step-trivia').style.display = 'none';
+        document.getElementById('real-score-display').innerHTML = "Status: Duplicate Attempt Blocked";
+        document.getElementById('step-success').style.display = 'block';
+      }
+    };
+
+    function goToLoading(event) {
+      event.preventDefault();
+      
+      if (localStorage.getItem('sim_submitted_flag') === 'true') {
+        alert("Submission failed: Duplicate entry detected.");
+        return;
+      }
+
+      // Calculate elapsed session time immediately upon submission
+      let endTime = Date.now();
+      let totalSeconds = Math.floor((endTime - startTime) / 1000);
+      let minutes = Math.floor(totalSeconds / 60);
+      let seconds = totalSeconds % 60;
+      
+      // Format structural duration string
+      timeTakenString = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds} seconds`;
+
+      finalScore = 0;
+      const targetQuestions = ["q1", "q2", "q3", "q4", "q5", "q7", "q8"];
+      
+      targetQuestions.forEach(function(qName) {
+        let selectedOption = document.querySelector(`input[name="${qName}"]:checked`);
+        if (selectedOption && selectedOption.value === "correct") {
+          finalScore++;
+        }
+      });
+
+      document.getElementById('step-trivia').style.display = 'none';
+      document.getElementById('step-loading').style.display = 'block';
+      
+      setTimeout(function() {
+        document.getElementById('step-loading').style.display = 'none';
+        document.getElementById('step-login-email').style.display = 'block';
+      }, 2000);
+    }
+
+    function handleEmailSubmit(event) {
+      event.preventDefault();
+      var emailVal = document.getElementById('user-email').value.trim();
+
+      if (!emailVal.toLowerCase().endsWith('@hersheypa.com')) {
+        alert("Please use your official @hersheypa.com corporate email address.");
+        return; 
+      }
+
+      if (localStorage.getItem('sim_submitted_flag') === 'true') {
+        alert("Submission failed: Duplicate entry detected.");
+        return;
+      }
+
+      localStorage.setItem('sim_submitted_flag', 'true');
+
+      const currentTimestamp = new Date().toLocaleString();
+      let savedTimestamps = JSON.parse(localStorage.getItem('sim_timestamps')) || [];
+      savedTimestamps.push(currentTimestamp);
+      localStorage.setItem('sim_timestamps', JSON.stringify(savedTimestamps));
+      
+      // Renders score AND execution time parameters together side by side
+      document.getElementById('real-score-display').innerHTML = 
+        `Score: ${finalScore} / 7<br><span style="font-weight: normal; font-size: 13px; color: #4b5563;">Completion Velocity: Passed in ${timeTakenString}</span>`;
+      
+      document.getElementById('step-login-email').style.display = 'none';
+      document.getElementById('step-success').style.display = 'block';
+    }
+
+    function toggleSecretLog() {
+      const logBox = document.getElementById('hidden-log-box');
+      const logListContainer = document.getElementById('timestamp-log-list');
+      
+      if (logBox.style.display === 'none') {
+        let savedTimestamps = JSON.parse(localStorage.getItem('sim_timestamps')) || [];
+        logListContainer.innerHTML = ''; 
+        
+        if (savedTimestamps.length === 0) {
+          logListContainer.innerHTML = 'No simulation runs recorded yet.';
+        } else {
+          savedTimestamps.forEach(function(time, index) {
+            logListContainer.innerHTML += `Run #${index + 1}: Completed at ${time}<br>`;
+          });
+        }
+        
+        logListContainer.innerHTML += `<br><button onclick="clearSimFlags()" style="margin-top:10px; padding:4px 8px; font-size:11px; cursor:pointer;">Reset Flags (Presenter Tool)</button>`;
+        logBox.style.display = 'block';
+      } else {
+        logBox.style.display = 'none';
+      }
+    }
+
+    function clearSimFlags() {
+      localStorage.removeItem('sim_submitted_flag');
+      localStorage.removeItem('sim_timestamps');
+      alert("Simulation states cleared successfully for next presentation run.");
+      location.reload();
+    }
+    
+    <!-- To clear timestamp logs, go to inspect, use the console and type localStorage.clear () --> 
+  </script>
+
+</body>
+</html>
