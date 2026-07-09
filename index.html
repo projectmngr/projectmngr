@@ -264,51 +264,51 @@
 }
 
 async function toggleSecretLog() {
-    const logBox = document.getElementById('hidden-log-box');
-    const clickListContainer = document.getElementById('click-log-list');
-    const submissionListContainer = document.getElementById('timestamp-log-list');
-
-    if (logBox.style.display === 'none') {
-        clickListContainer.innerHTML = 'Loading live cloud logs...';
-        submissionListContainer.innerHTML = 'Loading live cloud logs...';
-        logBox.style.display = 'block';
-
-        // 1. Fetch Link Clicks
-        const { data: clickData, error: clickError } = await supabaseClient
-            .from('link_clicks')
-            .select('clicked_at')
-            .order('clicked_at', { ascending: true });
-
-        clickListContainer.innerHTML = '';
-        if (clickError || !clickData || clickData.length === 0) {
-            clickListContainer.innerHTML = 'No global clicks recorded yet.';
-        } else {
-            clickData.forEach(function(row, index) {
-                // Strips the 'T' and milliseconds, displaying the exact database text
-                let displayTime = row.clicked_at ? row.clicked_at.replace('T', ' ').split('.')[0] : 'Unknown';
-                clickListContainer.innerHTML += `Global Click #${index + 1}: Opened at ${displayTime}<br>`;
-            });
-        }
-
-        // 2. Fetch Submissions
-        const { data: subData, error: subError } = await supabaseClient
-            .from('raffle_submissions')
-            .select('created_at')
-            .order('created_at', { ascending: true });
-
-        submissionListContainer.innerHTML = '';
-        if (subError || !subData || subData.length === 0) {
-            submissionListContainer.innerHTML = 'No global simulation runs recorded yet.';
-        } else {
-            subData.forEach(function(row, index) {
-                // Strips the 'T' and milliseconds, displaying the exact database text
-                let displayTime = row.created_at ? row.created_at.replace('T', ' ').split('.')[0] : 'Unknown';
-                submissionListContainer.innerHTML += `Global Run #${index + 1}: Completed at ${displayTime}<br>`;
-            });
-        }
+  const logBox = document.getElementById('hidden-log-box');
+  const clickListContainer = document.getElementById('click-log-list');
+  const submissionListContainer = document.getElementById('timestamp-log-list');
+  
+  if (logBox.style.display === 'none') {
+    clickListContainer.innerHTML = 'Loading live cloud logs...';
+    submissionListContainer.innerHTML = 'Loading live cloud logs...';
+    logBox.style.display = 'block';
+    
+    // 1. Fetch Link Clicks
+    const { data: clickData, error: clickError } = await supabaseClient
+      .from('link_clicks')
+      .select('clicked_at')
+      .order('clicked_at', { ascending: true });
+      
+    clickListContainer.innerHTML = '';
+    if (clickError || !clickData || clickData.length === 0) {
+      clickListContainer.innerHTML = 'No global clicks recorded yet.';
     } else {
-        logBox.style.display = 'none';
+      clickData.forEach(function(row, index) {
+        // Automatically converts UTC to the user's local system timezone and format
+        let displayTime = row.clicked_at ? new Date(row.clicked_at).toLocaleString() : 'Unknown';
+        clickListContainer.innerHTML += `Global Click #${index + 1}: Opened at ${displayTime}<br>`;
+      });
     }
+    
+    // 2. Fetch Submissions
+    const { data: subData, error: subError } = await supabaseClient
+      .from('raffle_submissions')
+      .select('created_at')
+      .order('created_at', { ascending: true });
+      
+    submissionListContainer.innerHTML = '';
+    if (subError || !subData || subData.length === 0) {
+      submissionListContainer.innerHTML = 'No global simulation runs recorded yet.';
+    } else {
+      subData.forEach(function(row, index) {
+        // Automatically converts UTC to the user's local system timezone and format
+        let displayTime = row.created_at ? new Date(row.created_at).toLocaleString() : 'Unknown';
+        submissionListContainer.innerHTML += `Global Run #${index + 1}: Completed at ${displayTime}<br>`;
+      });
+    }
+  } else {
+    logBox.style.display = 'none';
+  }
 }
 
     function clearSimFlags() {
