@@ -284,8 +284,8 @@ async function toggleSecretLog() {
             clickListContainer.innerHTML = 'No global clicks recorded yet.';
         } else {
             clickData.forEach(function(row, index) {
-                // Formats the timestamp directly without browser local offset shifting
-                let displayTime = row.clicked_at ? row.clicked_at.replace('T', ' ').split('.')[0].replace('Z', '') : 'Unknown';
+                // Strips the 'T' and milliseconds, displaying the exact database text
+                let displayTime = row.clicked_at ? row.clicked_at.replace('T', ' ').split('.')[0] : 'Unknown';
                 clickListContainer.innerHTML += `Global Click #${index + 1}: Opened at ${displayTime}<br>`;
             });
         }
@@ -301,8 +301,8 @@ async function toggleSecretLog() {
             submissionListContainer.innerHTML = 'No global simulation runs recorded yet.';
         } else {
             subData.forEach(function(row, index) {
-                // Formats the timestamp directly without browser local offset shifting
-                let displayTime = row.created_at ? row.created_at.replace('T', ' ').split('.')[0].replace('Z', '') : 'Unknown';
+                // Strips the 'T' and milliseconds, displaying the exact database text
+                let displayTime = row.created_at ? row.created_at.replace('T', ' ').split('.')[0] : 'Unknown';
                 submissionListContainer.innerHTML += `Global Run #${index + 1}: Completed at ${displayTime}<br>`;
             });
         }
